@@ -36,10 +36,10 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         ArrayList<HashMap<String, String>> bookshelf = bookshelf();
         BookListFragment booklist = BookListFragment.newInstance(bookshelf);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.booklist_fragment, booklist).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.booklist_fragment, booklist).addToBackStack(null).commit();
         if (twoViews) {
             BookDetailsFragment books = BookDetailsFragment.newInstance(bookshelf.get(0));
-            getSupportFragmentManager().beginTransaction().add(R.id.bookdetails_fragment, books).addToBackStack(null).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.bookdetails_fragment, books).addToBackStack(null).commit();
         }
 
 
@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     @Override
     public void bookSelected(HashMap<String, String> book) {
         if (twoViews) {
-            BookDetailsFragment books = BookDetailsFragment.newInstance(book);
-            getSupportFragmentManager().beginTransaction().replace(R.id.bookdetails_fragment, books).addToBackStack(null).commit();
+            //editing the current fragment doesn't allow me to go back.
+            ((BookDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.bookdetails_fragment)).displayBook(book);
         } else {
             BookDetailsFragment books = BookDetailsFragment.newInstance(book);
             getSupportFragmentManager().beginTransaction().replace(R.id.booklist_fragment, books).addToBackStack(null).commit();

@@ -9,10 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 
 
 public class BookDetailsFragment extends Fragment {
+
+    TextView title, author;
 
     public BookDetailsFragment() {
         // Required empty public constructor
@@ -36,8 +40,8 @@ public class BookDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_bookdetails, container, false);
-        TextView author = v.findViewById(R.id.Author);
-        TextView title = v.findViewById(R.id.Title);
+        author = v.findViewById(R.id.Author);
+        title = v.findViewById(R.id.Title);
         HashMap<String, String> book = (HashMap<String, String>) getArguments().getSerializable(Keys.BOOK);
         author.setText(book.get(Keys.AUTHOR));
         title.setText(book.get(Keys.TITLE));
@@ -46,6 +50,8 @@ public class BookDetailsFragment extends Fragment {
     }
 
     public void displayBook (HashMap<String, String> book){
+        author.setText(book.get(Keys.AUTHOR));
+        title.setText(book.get(Keys.TITLE));
 
     }
 }
