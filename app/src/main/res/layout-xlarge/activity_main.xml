@@ -9,15 +9,15 @@
 
     <FrameLayout
         android:id="@+id/booklist_fragment"
-        android:layout_width="181dp"
-        android:layout_height="1823dp"
+        android:layout_width="312dp"
+        android:layout_height="match_parent"
         android:layout_weight=".3">
 
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/bookdetails_fragment"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight=".7">
 
