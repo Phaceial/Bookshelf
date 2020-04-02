@@ -15,17 +15,20 @@ import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class BookListFragment extends Fragment {
     private BookSelectedInterface mCallback;
-    ArrayList<HashMap<String, String>> books;
+    ArrayList<Book> books;
+    BookAdapter bookAdapter;
 
     public BookListFragment() {
         // Required empty public constructor
     }
 
-    public static BookListFragment newInstance(ArrayList<HashMap<String, String>> books) {
+    public static BookListFragment newInstance(ArrayList<Book> books) {
         BookListFragment fragment = new BookListFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(Keys.BOOK, books);
@@ -41,22 +44,20 @@ public class BookListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_booklist, container, false);
-        final ListView listview = (ListView) v.findViewById(R.id.BookList);
-        books = (ArrayList<HashMap<String, String>>) getArguments().getSerializable(Keys.BOOK);
-        listview.setAdapter(new SimpleAdapter(getActivity(), books, android.R.layout.simple_list_item_2, new String[]{Keys.TITLE, Keys.AUTHOR}, new int[]{android.R.id.text1, android.R.id.text2}));
-        listview.setOnItemClickListener(new ListView.OnItemClickListener() {
+        ListView listView = (ListView) inflater.inflate(R.layout.fragment_booklist, container, false);
+        books = (ArrayList<Book>) getArguments().getSerializable(Keys.BOOK);
+        listView.setAdapter(bookAdapter = new BookAdapter(getActivity(), books));
+        listView.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mCallback.bookSelected(books.get(position));
             }
         });
-
-        return v;
+        return listView;
     }
 
     public interface BookSelectedInterface{
-        public void bookSelected(HashMap<String, String> book);
+        public void bookSelected(Book book);
     }
 
     @Override
@@ -73,5 +74,9 @@ public class BookListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mCallback = null;
+    }
+
+    public void searchUpdated(ArrayList<Book> bookshelf){
+        bookAdapter.notifyDataSetChanged();
     }
 }
