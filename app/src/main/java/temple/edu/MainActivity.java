@@ -2,28 +2,22 @@ package temple.edu;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements BookListFragment.BookSelectedInterface {
     boolean twoViews;
@@ -31,7 +25,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     ArrayList<Book> bookshelf = new ArrayList<>();
     Book book;
     RequestQueue requestQueue;
-    BookDetailsFragment bookdetails;
+    BookListFragment bookList;
+    BookDetailsFragment bookDetails;
 
 
 
@@ -41,13 +36,13 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         setContentView(R.layout.activity_main);
         titleSearch = findViewById(R.id.titleSearch);
         requestQueue = Volley.newRequestQueue(this);
-        final BookListFragment booklist = BookListFragment.newInstance(bookshelf);
-        getSupportFragmentManager().beginTransaction().replace(R.id.booklist_fragment, booklist).addToBackStack(null).commit();
-        twoViews = (findViewById(R.id.bookdetails_fragment) != null);
+        bookList = BookListFragment.newInstance(bookshelf);
+        getSupportFragmentManager().beginTransaction().replace(R.id.booklist_container, bookList).addToBackStack(null).commit();
+        twoViews = (findViewById(R.id.bookdetails_container) != null);
 
         if (twoViews) {
-            BookDetailsFragment books = BookDetailsFragment.newInstance(book);
-            getSupportFragmentManager().beginTransaction().replace(R.id.bookdetails_fragment, books).addToBackStack(null).commit();
+            bookDetails = BookDetailsFragment.newInstance(book);
+            getSupportFragmentManager().beginTransaction().replace(R.id.bookdetails_container, bookDetails).addToBackStack(null).commit();
         }
 
         findViewById(R.id.searchButton).setOnClickListener(new View.OnClickListener() {
@@ -55,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             public void onClick(View v) {
                 String url = "https://kamorris.com/lab/abp/booksearch.php?search";
                 JsonArrayRequest searchResults = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+                    @SuppressLint("ResourceType")
                     @Override
                     public void onResponse(JSONArray response) {
                         JSONObject book;
@@ -76,17 +72,18 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                                     }
                                 }
                             }
-                            if(bookshelf.size() == 1) {
-                                if(twoViews){
-                                    getSupportFragmentManager().beginTransaction().replace(R.id.bookdetails_fragment, bookdetails).addToBackStack(null).commit();
-                                }else {
-                                    bookdetails = BookDetailsFragment.newInstance(bookshelf.get(0));
-                                    getSupportFragmentManager().beginTransaction().replace(R.id.booklist_fragment, bookdetails).addToBackStack(null).commit();
-                                }
-                            } else
-                                getSupportFragmentManager().beginTransaction().replace(R.id.booklist_fragment, booklist).addToBackStack(null).commit();
-
-                            booklist.searchUpdated(bookshelf);
+//                            if(bookshelf.size() == 1) {
+//                                if (twoViews) {
+//                                    bookDetails.displayBook(bookshelf.get(0));
+//                                    getSupportFragmentManager().beginTransaction().replace(R.id.bookdetails_fragment, bookDetails).addToBackStack(null).commit();
+//                                } else {
+//                                    bookDetails = BookDetailsFragment.newInstance(bookshelf.get(0));
+//                                    getSupportFragmentManager().beginTransaction().replace(R.id.booklist_fragment, bookDetails).addToBackStack(null).commit();
+//                                }
+//                            }
+                            bookList.searchUpdated();
+                            if(getSupportFragmentManager().findFragmentById(R.id.booklist_container).getArguments().containsKey(Keys.BOOK))
+                                getSupportFragmentManager().beginTransaction().replace(R.id.booklist_container, bookList).addToBackStack(null).commit();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -95,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this, "Doesn't work", Toast.LENGTH_SHORT).show();
                         /*  added internet permission after installing, must have been working from cache
                             uninstalling and reinstalling app resolved issue
                         */
@@ -105,19 +101,15 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                 requestQueue.add(searchResults);
             }
         });
-
-
-
     }
 
     @Override
     public void bookSelected(Book book) {
         if (twoViews) {
-            //editing the current fragment doesn't allow me to go back.
-            ((BookDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.bookdetails_fragment)).displayBook(book);
+            ((BookDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.bookdetails_container)).displayBook(book);
         } else {
-            BookDetailsFragment books = BookDetailsFragment.newInstance(book);
-            getSupportFragmentManager().beginTransaction().replace(R.id.booklist_fragment, books).addToBackStack(null).commit();
+            bookDetails = BookDetailsFragment.newInstance(book);
+            getSupportFragmentManager().beginTransaction().replace(R.id.booklist_container, bookDetails).addToBackStack(null).commit();
         }
     }
 }

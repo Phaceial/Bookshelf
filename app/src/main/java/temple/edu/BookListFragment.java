@@ -11,12 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 
 public class BookListFragment extends Fragment {
@@ -31,7 +28,7 @@ public class BookListFragment extends Fragment {
     public static BookListFragment newInstance(ArrayList<Book> books) {
         BookListFragment fragment = new BookListFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Keys.BOOK, books);
+        bundle.putSerializable(Keys.LIST, books);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -45,7 +42,7 @@ public class BookListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ListView listView = (ListView) inflater.inflate(R.layout.fragment_booklist, container, false);
-        books = (ArrayList<Book>) getArguments().getSerializable(Keys.BOOK);
+        books = (ArrayList<Book>) getArguments().getSerializable(Keys.LIST);
         listView.setAdapter(bookAdapter = new BookAdapter(getActivity(), books));
         listView.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
@@ -76,7 +73,7 @@ public class BookListFragment extends Fragment {
         mCallback = null;
     }
 
-    public void searchUpdated(ArrayList<Book> bookshelf){
+    public void searchUpdated(){
         bookAdapter.notifyDataSetChanged();
     }
 }

@@ -10,16 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.io.Serializable;
-import java.util.HashMap;
+import com.squareup.picasso.Picasso;
 
 
 public class BookDetailsFragment extends Fragment {
 
     TextView title, author;
-    ImageView cover;
+    ImageView cover = null;
     Book book;
     View v;
 
@@ -31,7 +28,7 @@ public class BookDetailsFragment extends Fragment {
     public static BookDetailsFragment newInstance(Book book) {
         BookDetailsFragment fragment = new BookDetailsFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Keys.BOOK, (Serializable) book);
+        bundle.putSerializable(Keys.BOOK, book);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -59,5 +56,6 @@ public class BookDetailsFragment extends Fragment {
         cover = v.findViewById(R.id.Cover);
         title.setText(book.getTitle());
         author.setText(book.getAuthor());
+        Picasso.get().load(book.getCoverURL()).into(cover);
     }
 }
