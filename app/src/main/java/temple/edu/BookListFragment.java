@@ -3,6 +3,7 @@ package temple.edu;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -34,15 +35,26 @@ public class BookListFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(Keys.LIST, books);
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(getArguments() != null)
+            books = (ArrayList<Book>) getArguments().getSerializable(Keys.LIST);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ListView listView = (ListView) inflater.inflate(R.layout.fragment_booklist, container, false);
-        books = (ArrayList<Book>) getArguments().getSerializable(Keys.LIST);
+        if(books == null)
+            books = (ArrayList<Book>) getArguments().getSerializable(Keys.LIST);
+
         listView.setAdapter(bookAdapter = new BookAdapter(getActivity(), books));
         listView.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
@@ -52,6 +64,7 @@ public class BookListFragment extends Fragment {
         });
         return listView;
     }
+
 
     public interface BookSelectedInterface{
         public void bookSelected(Book book);

@@ -1,7 +1,9 @@
 package temple.edu;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -34,26 +36,35 @@ public class BookDetailsFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(Keys.BOOK, book);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
-        if(bundle != null)
-            book =(Book) bundle.getSerializable(Keys.BOOK);
+
+        if (getArguments() != null)
+            book = (Book) getArguments().getSerializable(Keys.BOOK);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_bookdetails, container, false);
-        if(book != null)
-            displayBook(book);
-        return v;
-    }
-
-    public void displayBook (Book book){
         author = v.findViewById(R.id.Author);
         title = v.findViewById(R.id.Title);
         cover = v.findViewById(R.id.Cover);
+        cover.setImageResource(android.R.color.transparent);
+
+        if (book != null)
+            displayBook(book);
+
+        return v;
+    }
+
+    public void displayBook(Book book) {
         title.setText(book.getTitle());
         author.setText(book.getAuthor());
         Picasso.get().load(book.getCoverURL()).into(cover);

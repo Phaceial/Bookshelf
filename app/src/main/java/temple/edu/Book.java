@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Book implements Serializable {
     private int id;
-    private String title, author, coverURL;
+    private String title = "", author = "", coverURL = "";
 
     public Book(int id, String title, String author, String coverURL){
         this.id =id;
