@@ -1,9 +1,7 @@
 package temple.edu;
 
-import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -36,17 +34,17 @@ public class BookDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(Keys.BOOK, book);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null)
+            book = (Book) savedInstanceState.getSerializable(Keys.BOOK);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null)
-            book = (Book) getArguments().getSerializable(Keys.BOOK);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (book != null)
+        outState.putSerializable(Keys.BOOK,book);
     }
 
     @Override
@@ -57,6 +55,8 @@ public class BookDetailsFragment extends Fragment {
         title = v.findViewById(R.id.Title);
         cover = v.findViewById(R.id.Cover);
         cover.setImageResource(android.R.color.transparent);
+        if(book == null)
+            book = (Book) getArguments().getSerializable(Keys.BOOK);
 
         if (book != null)
             displayBook(book);

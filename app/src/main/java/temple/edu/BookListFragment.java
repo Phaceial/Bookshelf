@@ -3,7 +3,6 @@ package temple.edu;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -35,18 +34,19 @@ public class BookListFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(Keys.LIST, books);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null)
+            books = (ArrayList<Book>) savedInstanceState.getSerializable(Keys.LIST);
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if(getArguments() != null)
-            books = (ArrayList<Book>) getArguments().getSerializable(Keys.LIST);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (books != null)
+        outState.putSerializable(Keys.LIST, books);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
