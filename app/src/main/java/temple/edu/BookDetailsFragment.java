@@ -1,5 +1,6 @@
 package temple.edu;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,7 +15,7 @@ import com.squareup.picasso.Picasso;
 
 
 public class BookDetailsFragment extends Fragment {
-
+    private PlayBookInterface mCallback;
     TextView title, author;
     ImageView cover = null;
     Book book;
@@ -54,6 +55,12 @@ public class BookDetailsFragment extends Fragment {
         author = v.findViewById(R.id.Author);
         title = v.findViewById(R.id.Title);
         cover = v.findViewById(R.id.Cover);
+        v.findViewById(R.id.playButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallback.play(book.getId());
+            }
+        });
         cover.setImageResource(android.R.color.transparent);
         if(book == null)
             book = (Book) getArguments().getSerializable(Keys.BOOK);
@@ -68,5 +75,28 @@ public class BookDetailsFragment extends Fragment {
         title.setText(book.getTitle());
         author.setText(book.getAuthor());
         Picasso.get().load(book.getCoverURL()).into(cover);
+    }
+
+    public interface PlayBookInterface{
+        public void play(int id);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try{
+            mCallback = (PlayBookInterface) context;
+        } catch (ClassCastException e){
+            throw new ClassCastException (context.toString() + " must implement PlayBookInterface");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
+    }
+
+    public void searchUpdated(){
     }
 }
